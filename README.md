@@ -1,7 +1,7 @@
-# service-node-red
-![](https://github.com/node-red/node-red-docker/blob/master/LICENSE)
+# service-grafana
+![][(https://grafana.com/docs/copyright-notice/)]
 
-This is an Open Horizon configuration to deploy a vanilla instance of the open-source [Node-Red][([https://nodered.org/docs/getting-started/docker]) software.  The Node-Red UI is designed to run in a web browser, so you will need to navigate to <http://localhost:1880/> to use the software once it has been deployed.
+This is an Open Horizon configuration to deploy a vanilla instance of the open-source [Grafana][([https://grafana.com/docs/grafana/latest/setup-grafana/installation/docker/]) software.  The Grafana UI is designed to run in a web browser, so you will need to navigate to <http://localhost:3000/> to use the software once it has been deployed.
 
 ## Prerequisites
 
@@ -13,12 +13,12 @@ This is an Open Horizon configuration to deploy a vanilla instance of the open-s
 
 ## Installation
 
-Clone the `service-nodered` GitHub repo from a terminal prompt on the edge node and enter the folder where the artifacts were copied.
+Clone the `service-grafana` GitHub repo from a terminal prompt on the edge node and enter the folder where the artifacts were copied.
 
   NOTE: This assumes that `git` has been installed on the edge node.
 
   ``` shell
-  git clone https://github.com/jwende/service-nodered.git
+  git clone https://github.com/jwende/service-grafana.git
   cd service-nodered
   ```
 
@@ -56,9 +56,10 @@ curl -sSL https://github.com/open-horizon/anax/releases/latest/download/agent-in
 
 ## Usage
 
-To manually run Node-Red locally as a test, enter `make`.  This will open a browser window, but it may do so before Node-Red is completely ready.  If you get a blank web page, wait about 10 seconds or so and reload the page.  Running `make attach` will connect you to a prompt running inside the container, and you can end that session by entering `exit`.  When you are done, run `make stop` in the terminal to end the test.
+To manually run Grafana locally as a test, enter `make`.  This will open a browser window, but it may do so before Grafan is completely ready.  If you get a blank web page, wait about 10 seconds or so and reload the page.  Running `make attach` will connect you to a prompt running inside the container, and you can end that session by entering `exit`.  When you are done, run `make stop` in the terminal to end the test.
+The initial user is 'admin' with password 'admin'.
 
-To create [the service definition](https://github.com/open-horizon/examples/blob/master/edge/services/helloworld/CreateService.md#build-publish-your-hw), publish it to the hub, and then form an agreement to download and run Node-Red, enter `make publish`.  When installation is complete and an agreement has been formed, exit the watch command with Control-C.  You may then open a browser pointing to Node-Red by entering `make browse` or visiting [http://localhost:1880/](http://localhost:1880/) in a web browser.
+To create [the service definition](https://github.com/open-horizon/examples/blob/master/edge/services/helloworld/CreateService.md#build-publish-your-hw), publish it to the hub, and then form an agreement to download and run Grafana, enter `make publish`.  When installation is complete and an agreement has been formed, exit the watch command with Control-C.  You may then open a browser pointing to Grafana by entering `make browse` or visiting [http://localhost:3000/](http://localhost:3000/) in a web browser.
 
 ## Advanced details
 
@@ -82,12 +83,12 @@ The Makefile includes several targets to assist you in inspecting what is happen
 
 * `default` - init run browse
 * `init` - optionally create the docker volume
-* `run` - manually run the Node-Red container locally as a test
-* `browse` - open the Node-Red UI in a web browser
+* `run` - manually run the container locally as a test
+* `browse` - open the UI in a web browser
 * `check` - view current settings
 * `stop` - halt a locally-run container
-* `dev` - manually run Node-Red locally and connect to a terminal in the container
-* `attach` - connect to a terminal in the Node-Red container
+* `dev` - manually run it locally and connect to a terminal in the container
+* `attach` - connect to a terminal in the container
 * `test` - request the web UI from the terminal to confirm that it is running and available
 * `clean` - remove the container image and docker volume
 * `distclean` - clean (see above) AND unregister the node and remove the service files from the hub
