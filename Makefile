@@ -5,7 +5,7 @@ export DOCKER_IMAGE_NAME ?= grafana
 export DOCKER_IMAGE_VERSION ?= latest
 export DOCKER_VOLUME_NAME ?= grafana-storage
 
-# DockerHub ID of the third party providing the image (usually yours if building and pushing)
+# DockerHub ID of the third party providing the image (usually yours if building and pushing) 
 export DOCKER_HUB_ID ?= grafana
 
 # The Open Horizon organization ID namespace where you will be publishing the service definition file
