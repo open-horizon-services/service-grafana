@@ -7,7 +7,7 @@ This is an Open Horizon configuration to deploy a vanilla instance of the open-s
 
 **Management Hub:** [Install the Open Horizon Management Hub](https://open-horizon.github.io/quick-start) or have access to an existing hub in order to publish this service and register your edge node.  You may also choose to use a downstream commercial distribution based on Open Horizon, such as IBM's Edge Application Manager.  If you'd like to use the Open Horizon community hub, you may [apply for a temporary account](https://wiki.lfedge.org/display/LE/Open+Horizon+Management+Hub+Developer+Instance) and have credentials sent to you.
 
-**Edge Node:** You will need an x86 computer running Linux or macOS, or a Raspberry Pi computer (arm64) running Raspberry Pi OS or Ubuntu to install and use Node-Red deployed by Open Horizon.  You will need to install the Open Horizon agent software, anax, on the edge node and register it with a hub.
+**Edge Node:** You will need an x86 computer running Linux or macOS, or a Raspberry Pi computer (arm64) running Raspberry Pi OS or Ubuntu to install and use Grafana deployed by Open Horizon.  You will need to install the Open Horizon agent software, anax, on the edge node and register it with a hub.
 
 **Optional utilities to install:**  With `brew` on macOS (you may need to install _that_ as well), `apt-get` on Ubuntu or Raspberry Pi OS, `yum` on Fedora, install `gcc`, `make`, `git`, `jq`, `curl`, `net-tools`.  Not all of those may exist on all platforms, and some may already be installed.  But reflexively installing those has proven helpful in having the right tools available when you need them.
 
@@ -19,7 +19,7 @@ Clone the `service-grafana` GitHub repo from a terminal prompt on the edge node 
 
   ``` shell
   git clone https://github.com/jwende/service-grafana.git
-  cd service-nodered
+  cd service-grafana
   ```
 
 Run `make clean` to confirm that the "make" utility is installed and working.
@@ -41,12 +41,12 @@ Confirm that you have the Open Horizon agent installed by using the CLI to check
 
   If it returns a version for the CLI but not the agent, then the agent is installed but not running.  You may run it with `systemctl horizon start` on Linux or `horizon-container start` on macOS.
 
-Check that the agent is in an unconfigured state, and that it can communicate with a hub.  If you have the `jq` utility installed, run `hzn node list | jq '.configstate.state'` and check that the value returned is "unconfigured".  If not, running `make agent-stop` or `hzn unregister -f` will put the agent in an unconfigured state.  Run `hzn node list | jq '.configuration'` and check that the JSON returned shows values for the "exchange_version" property, as well as the "exchange_api" and "mms_api" properties showing URLs.  If those do not, then the agent is not configured to communicate with a hub.  If you do not have `jq` installed, run `hzn node list` and eyeball the sections mentioned above.
+Check that the agent is in an unconfigured state, and that it can communicate with a hub.  If you have the `jq` utility installed, run `hzn  list | jq '.configstate.state'` and check that the value returned is "unconfigured".  If not, running `make agent-stop` or `hzn unregister -f` will put the agent in an unconfigured state.  Run `hzn  list | jq '.configuration'` and check that the JSON returned shows values for the "exchange_version" property, as well as the "exchange_api" and "mms_api" properties showing URLs.  If those do not, then the agent is not configured to communicate with a hub.  If you do not have `jq` installed, run `hzn  list` and eyeball the sections mentioned above.
 
 NOTE: If "exchange_version" is showing an empty value, you will not be able to publish and run the service.  The only fix found to this condition thus far is to re-install the agent using these instructions:
 
 ``` shell
-hzn unregister -f # to ensure that the node is unregistered
+hzn unregister -f # to ensure that the  is unregistered
 systemctl horizon stop # for Linux, or "horizon-container stop" on macOS
 export HZN_ORG_ID=myorg   # or whatever you customized it to
 export HZN_EXCHANGE_USER_AUTH=admin:<admin-pw>   # use the pw deploy-mgmt-hub.sh displayed
@@ -77,7 +77,7 @@ The Makefile includes several targets to assist you in inspecting what is happen
 
 `make attach` to connect to the running container and open a shell inside it.
 
-> **Note** The Node-Red container by default runs in un-privileged mode, but it may require privileged conditions in certain cases. In that case you can manually add "--privileged" flag in the Makefile under `docker-run` command.
+> **Note** The Grafana container by default runs in un-privileged mode, but it may require privileged conditions in certain cases. In that case you can manually add "--privileged" flag in the Makefile under `docker-run` command.
 
 ### All Makefile targets
 
