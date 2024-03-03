@@ -1,7 +1,7 @@
 # service-grafana
-![][(https://grafana.com/docs/copyright-notice/)]
+![Copyright](https://grafana.com/docs/copyright-notice/)
 
-This is an Open Horizon configuration to deploy a vanilla instance of the open-source [Grafana][([https://grafana.com/docs/grafana/latest/setup-grafana/installation/docker/]) software.  The Grafana UI is designed to run in a web browser, so you will need to navigate to <http://localhost:3000/> to use the software once it has been deployed.
+This is an Open Horizon configuration to deploy a vanilla instance of the open-source [Grafana][(https://grafana.com/docs/grafana/latest/setup-grafana/installation/docker/) software.  The Grafana UI is designed to run in a web browser, so you will need to navigate to <http://localhost:3000/> to use the software once it has been deployed.
 
 ## Prerequisites
 
