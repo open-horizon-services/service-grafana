@@ -26,7 +26,7 @@
 				],
 			        "binds": [
 					"$DOCKER_VOLUME_NAME:/var/lib/grafana"
-				],
+				]
 			}
 		}
    }
