@@ -1,4 +1,4 @@
-# Multi-arch docker container instance of the open-source nodered project intended for Open Horizon Linux edge nodes
+# Multi-arch docker container instance of the open-source grafana project intended for Open Horizon Linux edge nodes
 
 export DOCKER_IMAGE_BASE ?= grafana/grafana-oss
 export DOCKER_IMAGE_NAME ?= grafana
