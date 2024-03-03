@@ -1,12 +1,12 @@
 # Multi-arch docker container instance of the open-source nodered project intended for Open Horizon Linux edge nodes
 
-export DOCKER_IMAGE_BASE ?= nodered/node-red
-export DOCKER_IMAGE_NAME ?= nodered
+export DOCKER_IMAGE_BASE ?= grafana/grafana-oss
+export DOCKER_IMAGE_NAME ?= grafana
 export DOCKER_IMAGE_VERSION ?= latest
-export DOCKER_VOLUME_NAME ?= nodered_config
+export DOCKER_VOLUME_NAME ?= grafana-storage
 
 # DockerHub ID of the third party providing the image (usually yours if building and pushing)
-export DOCKER_HUB_ID ?= nodered
+export DOCKER_HUB_ID ?= grafana
 
 # The Open Horizon organization ID namespace where you will be publishing the service definition file
 export HZN_ORG_ID ?= examples
@@ -15,9 +15,9 @@ export HZN_ORG_ID ?= examples
 export MY_TIME_ZONE ?= America/New_York
 
 # Open Horizon settings for publishing metadata about the service
-export DEPLOYMENT_POLICY_NAME ?= deployment-policy-nodered
-export NODE_POLICY_NAME ?= node-policy-nodered
-export SERVICE_NAME ?= service-nodered
+export DEPLOYMENT_POLICY_NAME ?= deployment-policy-grafana
+export NODE_POLICY_NAME ?= node-policy-grafana
+export SERVICE_NAME ?= service-grafana
 export SERVICE_VERSION ?= 0.0.1
 
 # Default ARCH to the architecture of this machine (assumes hzn CLI installed)
@@ -32,16 +32,16 @@ check:
 	@echo "====================="
 	@echo "ENVIRONMENT VARIABLES"
 	@echo "====================="
-	@echo "DOCKER_IMAGE_BASE      default: nodered/node-red			actual: ${DOCKER_IMAGE_BASE}"
-	@echo "DOCKER_IMAGE_NAME      default: nodered                         actual: ${DOCKER_IMAGE_NAME}"
+	@echo "DOCKER_IMAGE_BASE      default: grafana/grafana-oss			actual: ${DOCKER_IMAGE_BASE}"
+	@echo "DOCKER_IMAGE_NAME      default: grafana                         actual: ${DOCKER_IMAGE_NAME}"
 	@echo "DOCKER_IMAGE_VERSION   default: latest                                actual: ${DOCKER_IMAGE_VERSION}"
-	@echo "DOCKER_VOLUME_NAME     default: nodered_config                  actual: ${DOCKER_VOLUME_NAME}"
-	@echo "DOCKER_HUB_ID           default: nodered                         actual: ${DOCKER_HUB_ID}"
+	@echo "DOCKER_VOLUME_NAME     default: grafana-storage                  actual: ${DOCKER_VOLUME_NAME}"
+	@echo "DOCKER_HUB_ID           default: grafana                         actual: ${DOCKER_HUB_ID}"
 	@echo "HZN_ORG_ID             default: examples                              actual: ${HZN_ORG_ID}"
 	@echo "MY_TIME_ZONE           default: America/New_York                      actual: ${MY_TIME_ZONE}"
-	@echo "DEPLOYMENT_POLICY_NAME default: deployment-policy-nodered       actual: ${DEPLOYMENT_POLICY_NAME}"
-	@echo "NODE_POLICY_NAME       default: node-policy-nodered             actual: ${NODE_POLICY_NAME}"
-	@echo "SERVICE_NAME           default: service-nodered                 actual: ${SERVICE_NAME}"
+	@echo "DEPLOYMENT_POLICY_NAME default: deployment-policy-grafana       actual: ${DEPLOYMENT_POLICY_NAME}"
+	@echo "NODE_POLICY_NAME       default: node-policy-grafana             actual: ${NODE_POLICY_NAME}"
+	@echo "SERVICE_NAME           default: service-grafana                 actual: ${SERVICE_NAME}"
 	@echo "SERVICE_VERSION        default: 0.0.1                                 actual: ${SERVICE_VERSION}"
 	@echo "ARCH                   default: amd64                                 actual: ${ARCH}"
 	@echo ""
@@ -62,8 +62,8 @@ run: stop
 		--name $(DOCKER_IMAGE_NAME) \
 		--restart=unless-stopped \
 		-e TZ=$(MY_TIME_ZONE) \
-		-v $(DOCKER_VOLUME_NAME):/config \
-		-p 1880:1880 \
+		-v $(DOCKER_VOLUME_NAME):/var/lib/grafana \
+		-p 3000:3000 \
 		$(DOCKER_IMAGE_BASE):$(DOCKER_IMAGE_VERSION)
 
 dev: run attach
@@ -74,13 +74,13 @@ attach:
 		/bin/bash		
 
 test:
-	@curl -sS http://127.0.0.1:1880
+	@curl -sS http://127.0.0.1:3000
 
 browse:
 ifeq ($(OS),Darwin)
-	@open http://127.0.0.1:1880
+	@open http://127.0.0.1:3000
 else
-	@xdg-open http://127.0.0.1:1880
+	@xdg-open http://127.0.0.1:3000
 endif
 
 clean: stop
