@@ -1,0 +1,9 @@
+{
+    "HZN_ORG_ID": "examples",
+    "MetadataVars": {
+        "DOCKER_IMAGE_BASE": "grafana/grafana-oss",
+        "DOCKER_IMAGE_VERSION": "latest",
+        "SERVICE_NAME": "service-grafana",
+        "SERVICE_VERSION": "0.0.1"
+    }
+}
