@@ -3,6 +3,24 @@
 
 This is an Open Horizon configuration to deploy a vanilla instance of the open-source [Grafana](https://grafana.com/docs/grafana/latest/setup-grafana/installation/docker/) software.  The Grafana UI is designed to run in a web browser, so you will need to navigate to <http://localhost:3000/> to use the software once it has been deployed.
 
+## Service Structure
+
+This service follows the standard Open Horizon service structure created by `hzn dev service new`. All service definition files are organized in the `horizon/` directory:
+
+```
+service-grafana/
+├── horizon/
+│   ├── dependencies/             # Service dependencies (if any)
+│   ├── deployment.policy.json    # Deployment policy (for publishing to Exchange)
+│   ├── hzn.json                  # HZN CLI configuration with metadata variables
+│   ├── node.policy.json          # Example node policy
+│   ├── service.definition.json   # Core service definition
+│   ├── service.policy.json       # Service policy for policy-based deployment
+│   └── userinput.json            # User input variable values
+├── Makefile                      # Build and deployment automation
+└── README.md                     # This file
+```
+
 ## Prerequisites
 
 **Management Hub:** [Install the Open Horizon Management Hub](https://open-horizon.github.io/quick-start) or have access to an existing hub in order to publish this service and register your edge node.  You may also choose to use a downstream commercial distribution based on Open Horizon, such as IBM's Edge Application Manager.  If you'd like to use the Open Horizon community hub, you may [apply for a temporary account](https://wiki.lfedge.org/display/LE/Open+Horizon+Management+Hub+Developer+Instance) and have credentials sent to you.
