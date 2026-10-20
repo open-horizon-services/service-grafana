@@ -6,7 +6,7 @@
         "inputs": [
             {
                 "name": "MY_TIME_ZONE",
-                "value": "America/New_York"
+                "value": "$MY_TIME_ZONE"
             }
         ]
     }

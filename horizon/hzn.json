@@ -1,9 +1,15 @@
 {
     "HZN_ORG_ID": "examples",
     "MetadataVars": {
-        "DOCKER_IMAGE_BASE": "grafana/grafana-oss",
-        "DOCKER_IMAGE_VERSION": "latest",
+        "DOCKER_IMAGE_BASE": "grafana/grafana",
+        "DOCKER_IMAGE_VERSION": "13.2.4",
+        "DOCKER_VOLUME_NAME": "grafana-storage",
+        "GRAFANA_CONTAINER_PORT": "3000",
+        "GRAFANA_DATA_PATH": "/var/lib/grafana",
+        "GRAFANA_HOST_IP": "0.0.0.0",
+        "GRAFANA_HOST_PORT": "3000",
+        "MY_TIME_ZONE": "America/New_York",
         "SERVICE_NAME": "service-grafana",
-        "SERVICE_VERSION": "0.0.1"
+        "SERVICE_VERSION": "0.1.0"
     }
 }

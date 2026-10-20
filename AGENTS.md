@@ -2,139 +2,32 @@
 
 This file provides guidance to agents when working with code in this repository.
 
-## Project Overview
+Open Horizon service wrapper around the stock `grafana/grafana-oss` image. There is no application code, no build, no lint, and no automated tests. All logic lives in the [`Makefile`](Makefile) and the JSON files in [`horizon/`](horizon/).
 
-This repository contains an **Open Horizon service configuration** for deploying Grafana, an open-source analytics and monitoring platform. The project is designed to run Grafana as a containerized edge service on Open Horizon-managed edge nodes.
+## Commands
 
-**Key Technologies:**
-- **Open Horizon**: Edge computing platform for autonomous management of containerized workloads
-- **Grafana OSS**: Third-party Docker image (`grafana/grafana-oss`) for data visualization
-- **Docker**: Container runtime with persistent volume storage
-- **Make**: Build automation and service lifecycle management
+- `make test` is only `curl http://127.0.0.1:3000`. It needs a running container, so run `make run` first. There is no single-test runner.
+- `make build` and `make push` are intentional no-ops (third-party image).
+- Validate policy changes with `make deploy-check` (`hzn deploycheck all`) before `make publish`. It needs the `hzn` CLI.
+- `make check` prints variables and the `envsubst`-rendered `service.definition.json`. Use it to verify JSON edits.
+- `make publish` ends with `agent-run`, which runs `watch hzn agreement list` and blocks until interrupted. Do not run it in a non-interactive shell.
+- `make distclean` unregisters the node, removes the policies and the service from the Exchange, then deletes the local container, image and volume. It is destructive.
 
-**Architecture:**
-- Deploys pre-built Grafana Docker images (not custom-built)
-- Multi-architecture support: amd64, arm64, arm/v7
-- Policy-based deployment using Open Horizon's service, deployment, and node policies
-- Persistent data storage via Docker volumes (`grafana-storage`)
-- Web UI accessible on port 3000
+## Gotchas
 
-## Building and Running
-
-### Prerequisites
-- Open Horizon Management Hub access (or IBM Edge Application Manager)
-- Open Horizon agent (`anax`) installed and registered on edge node
-- Docker installed
-- `hzn` CLI tool available
-- Optional: `jq`, `curl`, `git`, `make`
-
-### Local Testing (Manual)
-```bash
-# Initialize Docker volume and run Grafana locally
-make                    # Equivalent to: make init run browse
-
-# Stop local instance
-make stop
-
-# Clean up (removes container and volume)
-make clean
-```
-
-### Publishing to Open Horizon Hub
-```bash
-# Publish service definition, policies, and register node
-make publish
-
-# This executes:
-# 1. make publish-service          - Publishes service definition to hub
-# 2. make publish-service-policy   - Publishes service policy
-# 3. make publish-deployment-policy - Publishes deployment policy
-# 4. make agent-run                - Registers node with hub
-```
-
-### Unregistering and Cleanup
-```bash
-# Unregister node and remove all policies/services
-make distclean
-
-# Just unregister the node
-make agent-stop
-```
-
-### Key Makefile Targets
-- `make check` - Display environment variables and service definition
-- `make deploy-check` - Verify policy compatibility before deployment
-- `make log` - View Open Horizon event logs and service logs
-- `make test` - Test if Grafana web UI is responding
-- `make attach` - Connect to running container shell
-- `make browse` - Open Grafana UI in browser (http://localhost:3000)
-
-## Configuration
-
-### Environment Variables
-All configuration is done via environment variables (can be set in shell or `.env` file):
-
-**Docker Configuration:**
-- `DOCKER_IMAGE_BASE` - Base image name (default: `grafana/grafana-oss`)
-- `DOCKER_IMAGE_VERSION` - Image tag (default: `latest`)
-- `DOCKER_VOLUME_NAME` - Persistent volume name (default: `grafana-storage`)
-
-**Open Horizon Configuration:**
-- `HZN_ORG_ID` - Organization ID in Open Horizon hub (default: `examples`)
-- `SERVICE_NAME` - Service identifier (default: `service-grafana`)
-- `SERVICE_VERSION` - Service version (default: `0.0.1`)
-- `ARCH` - Target architecture (default: `amd64`)
-
-**Application Configuration:**
-- `MY_TIME_ZONE` - Timezone for Grafana (default: `America/New_York`)
-
-### Policy Files
-
-**service.definition.json**
-- Defines the service metadata, Docker image, port mappings, and volume binds
-- Uses environment variable substitution (`$VAR_NAME`)
-- Exposes port 3000 for web UI
-- Configurable user input: `MY_TIME_ZONE`
-
-**deployment.policy.json**
-- Defines deployment constraints and properties
-- Constraints: `purpose == automation` and `openhorizon.allowPrivileged == true`
-- Supports all architectures (`arch: "*"`)
-
-**service.policy.json** and **node.policy.json**
-- Define service and node-level policies for agreement formation
-
-## Development Conventions
-
-### No Custom Build Process
-This project does **not** build custom Docker images. It deploys the official `grafana/grafana-oss` image from Docker Hub. The `make build` and `make push` targets are no-ops with informational messages.
-
-### Policy-Based Deployment
-Open Horizon uses a policy-based approach where:
-1. **Service Policy** - Defines service requirements
-2. **Deployment Policy** - Defines where/how service should be deployed
-3. **Node Policy** - Defines node capabilities and properties
-4. Agreements are formed when policies match
-
-### Debugging Workflow
-1. Use `make check` to verify environment variables
-2. Use `make deploy-check` to validate policy compatibility
-3. Use `make log` to view event and service logs
-4. Use `make attach` to inspect running container
-5. Use `make test` to verify web UI availability
-
-### Privileged Mode
-The container runs in unprivileged mode by default. If privileged access is needed, manually add `--privileged` flag to the `docker run` command in the Makefile under the `run` target.
-
-### Default Credentials
-- Username: `admin`
-- Password: `admin` (Grafana will prompt to change on first login)
-
-## Project Maintainers
-- Joe Pearson (@joewxboy) - joe.pearson@us.ibm.com
-- Joerg Wende (@jwende) - jwende@gmx.de
-
-## Additional Resources
-- [Grafana Documentation](https://grafana.com/docs/grafana/latest/)
-- [Open Horizon Documentation](https://open-horizon.github.io/)
-- [Open Horizon Examples](https://github.com/open-horizon/examples)
+- Local `make run` and the Horizon deployment are independent definitions. Port, volume and `TZ` changes must be made in both the `run` target in the Makefile and `horizon/service.definition.json`.
+- Defaults are duplicated in several places and must be kept in sync:
+  - Makefile `?=` defaults
+  - [`horizon/hzn.json`](horizon/hzn.json) `MetadataVars`
+  - `defaultValue` in `service.definition.json`
+  - [`horizon/userinput.json`](horizon/userinput.json)
+- `$VAR` placeholders in `horizon/*.json` are substituted by `hzn` or `envsubst`, not by Make. Make exports its variables so they are visible.
+- `ARCH` defaults to `amd64`. It is not auto-detected despite the Makefile comment, so set it explicitly on arm nodes. The Exchange service ID is `$HZN_ORG_ID/$SERVICE_NAME_$SERVICE_VERSION_$ARCH`.
+- The deployment policy ID is `policy-$SERVICE_NAME_$SERVICE_VERSION`. Changing `SERVICE_VERSION` requires republishing both the service and the policy, and `distclean` must use the same version it was published with.
+- Matching constraints are hard-coded in three files:
+  - [`horizon/node.policy.json`](horizon/node.policy.json) must provide `purpose=automation` and `openhorizon.allowPrivileged=true`.
+  - [`horizon/service.policy.json`](horizon/service.policy.json) and [`horizon/deployment.policy.json`](horizon/deployment.policy.json) require them.
+  - Changing one without the others silently prevents agreement formation.
+- The service is `"sharable": "singleton"` with `"public": true`.
+- The service definition publishes port 3000 with `HostIP` `0.0.0.0` and the Makefile `-p 3000:3000` also binds all interfaces. This conflicts with the security rule to bind to 127.0.0.1. Do not copy this pattern into new services.
+- Default Grafana login is `admin`/`admin`.
