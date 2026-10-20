@@ -14,20 +14,24 @@
 			"name": "MY_TIME_ZONE",
 			"label": "User time zone",
 			"type": "string",
-			"defaultValue": "America/New_York"
+			"defaultValue": "$MY_TIME_ZONE"
 		}
 	],
 	"deployment": {
 		"services": {
 			"$SERVICE_NAME": {
 				"image": "$DOCKER_IMAGE_BASE:$DOCKER_IMAGE_VERSION",
-				"ports": [
-					{ "HostIP": "0.0.0.0", "HostPort": "3000:3000/tcp" }
+				"environment": [
+					"GF_SERVER_HTTP_PORT=$GRAFANA_CONTAINER_PORT",
+					"GF_PATHS_DATA=$GRAFANA_DATA_PATH"
 				],
-			        "binds": [
-					"$DOCKER_VOLUME_NAME:/var/lib/grafana"
+				"ports": [
+					{ "HostIP": "$GRAFANA_HOST_IP", "HostPort": "$GRAFANA_HOST_PORT:$GRAFANA_CONTAINER_PORT/tcp" }
+				],
+				"binds": [
+					"$DOCKER_VOLUME_NAME:$GRAFANA_DATA_PATH"
 				]
 			}
 		}
-   }
+	}
 }
